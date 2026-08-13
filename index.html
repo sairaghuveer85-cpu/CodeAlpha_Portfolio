@@ -433,6 +433,22 @@ nav.scrolled{background:rgba(5,5,5,0.72);box-shadow:0 6px 30px rgba(0,0,0,0.45)}
   letter-spacing:.18em;
 }
 
+/* Stabilize subtitle area to avoid layout shifts during typing */
+.hero-sub{
+  display:block;
+  height:1.4em; /* reserve vertical space */
+  line-height:1.4em;
+  overflow:hidden;
+}
+
+#typed{
+  display:inline-block;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  min-width:12ch; /* fallback; script will set exact width */
+}
+
 .hero-title em{
   color:var(--gold);
   font-style:italic;
@@ -1050,6 +1066,37 @@ body.light-theme .toggle-thumb{
   .skill-card{padding:10px}
   .skill-name{font-size:13px}
   .skill-percent{font-size:12px}
+}
+
+/* Stronger mobile alignment overrides for better visual balance */
+@media (max-width:950px){
+  nav{
+    grid-template-columns: auto 1fr auto;
+    align-items:center;
+    padding:12px 18px;
+  }
+  .logo{justify-self:start;font-size:18px}
+  .hamburger{justify-self:end}
+  .theme-toggle{justify-self:end;margin-left:8px}
+  .nav-links{display:none}
+
+  /* center main hero content on narrow screens */
+  .hero-left, .hero-right{text-align:center}
+  .hero-left::before{left:50%;transform:translateX(-50%);top:-80px}
+  .hero-desc{margin:20px auto;max-width:520px;border-left:none;padding-left:0}
+  .hero-title{font-size:56px}
+
+  /* center section titles and content for readability */
+  .section-title, .section-title-small{display:block;text-align:center}
+  .about-text, .project-title, .learning-title, .contact-title{text-align:center}
+
+  /* mobile nav sits just under the nav bar */
+  .mobile-nav{top:64px}
+
+  /* skills compact alignment */
+  .skill-card{align-items:center}
+  .skill-row{align-items:center}
+  .skill-percent{white-space:nowrap}
 }
 
 </style>
@@ -1807,6 +1854,13 @@ themeToggle.addEventListener('click', () => {
 const typedEl = document.getElementById('typed');
 const words = ['Full Stack Engineer','Java & Android','React Frontend','Spring Backend','Design-minded'];
 let widx = 0; let cidx = 0; let forward = true;
+// stabilize width to longest word to prevent layout shift
+{
+  const longest = words.reduce((a,b)=> a.length>b.length? a:b, '');
+  // set min-width based on character count using ch unit
+  typedEl.style.minWidth = (longest.length + 2) + 'ch';
+}
+
 function tick(){
   const word = words[widx];
   if(forward){
