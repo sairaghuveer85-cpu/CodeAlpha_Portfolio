@@ -339,7 +339,7 @@ nav.scrolled{background:rgba(5,5,5,0.72);box-shadow:0 6px 30px rgba(0,0,0,0.45)}
 
 .hero{
   min-height:100vh;
-  padding:180px 80px 100px;
+  padding:140px 40px 80px;
   position:relative;
   overflow:hidden;
 }
@@ -358,15 +358,15 @@ nav.scrolled{background:rgba(5,5,5,0.72);box-shadow:0 6px 30px rgba(0,0,0,0.45)}
 
 .hero-blob{
   position:absolute;
-  right:-120px;
-  top:-80px;
-  width:640px;
-  height:640px;
+  right:-80px;
+  top:-40px;
+  width:420px;
+  height:420px;
   background:linear-gradient(135deg, rgba(201,168,76,0.12), rgba(240,215,141,0.06));
-  filter:blur(48px);
+  filter:blur(28px);
   border-radius:40% 60% 40% 60% / 60% 40% 60% 40%;
   transform:rotate(12deg) scale(1);
-  animation:blobMove 10s ease-in-out infinite;
+  animation:blobMove 14s ease-in-out infinite;
   z-index:0;
   pointer-events:none;
 }
@@ -413,7 +413,7 @@ nav.scrolled{background:rgba(5,5,5,0.72);box-shadow:0 6px 30px rgba(0,0,0,0.45)}
 
 .hero-title{
   font-family:var(--display);
-  font-size:120px;
+  font-size:90px;
   line-height:.82;
   letter-spacing:-7px;
   text-transform:uppercase;
@@ -632,6 +632,8 @@ nav.scrolled{background:rgba(5,5,5,0.72);box-shadow:0 6px 30px rgba(0,0,0,0.45)}
 .skill-group::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(135deg, rgba(255,255,255,0.02) 0 2px, transparent 2px 10px);opacity:0.03;pointer-events:none}
 .skill-card{display:flex;gap:18px;align-items:center;padding:18px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.02));border-radius:14px;margin-bottom:14px;border:1px solid rgba(255,255,255,0.03);transition:transform .38s cubic-bezier(.16,1,.3,1),box-shadow .38s ease;transform-style:preserve-3d}
 .skill-card:hover{transform:translateY(-12px) rotateX(2deg) scale(1.02);box-shadow:0 24px 60px rgba(201,168,76,0.10), inset 0 0 60px rgba(201,168,76,0.02);border-color:rgba(201,168,76,0.22)}
+.skill-card:focus{outline:none;transform:translateY(-12px) rotateX(2deg) scale(1.02);box-shadow:0 24px 60px rgba(201,168,76,0.12), inset 0 0 80px rgba(201,168,76,0.04);border-color:rgba(201,168,76,0.26)}
+.skill-card:focus-visible{box-shadow:0 28px 80px rgba(201,168,76,0.16), inset 0 0 100px rgba(201,168,76,0.06);border-color:rgba(201,168,76,0.28)}
 .skill-left{width:64px;height:64px;flex:0 0 64px;border-radius:12px;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:800;color:#000;box-shadow:inset 0 -6px 18px rgba(0,0,0,0.25), 0 6px 18px rgba(0,0,0,0.35);backdrop-filter:blur(6px);font-size:14px;line-height:1;position:relative}
 .skill-left::after{content:'';position:absolute;inset:5px;border-radius:10px;border:1px solid rgba(255,255,255,0.02);box-shadow:inset 0 6px 18px rgba(255,255,255,0.02)}
 .skill-body{flex:1;min-width:0}
@@ -957,7 +959,7 @@ body.light-theme .toggle-thumb{
   }
 
   .hero{
-    padding:140px 24px 80px;
+    padding:120px 18px 60px;
   }
 
   .hero-grid{
@@ -966,7 +968,7 @@ body.light-theme .toggle-thumb{
   }
 
   .hero-title{
-    font-size:72px;
+    font-size:56px;
   }
 
   .hero-bg{
@@ -1011,6 +1013,43 @@ body.light-theme .toggle-thumb{
     padding:30px 24px;
   }
 
+}
+
+/* Aggressive mobile optimizations */
+@media (max-width:700px){
+  /* reduce heavy visual effects */
+  :root{--gold2:var(--gold);} /* avoid extra gradients on tiny screens */
+  body{ -webkit-font-smoothing:antialiased; }
+  nav{padding:14px 18px}
+  .hero{padding:100px 16px 48px}
+  .hero-title{font-size:44px}
+  .hero-bg{display:none}
+  .hero-blob{display:none}
+
+  /* simplify shadows and glows for battery/CPU */
+  .skill-group, .skill-card, .project-card, .about-card{box-shadow:0 6px 18px rgba(0,0,0,0.45)}
+  .progress-fill{transition:width .9s cubic-bezier(.16,1,.3,1)}
+  .progress-glow{display:none}
+  .progress-fill.animate{animation:none}
+  .progress-fill .shimmer{display:none}
+
+  /* remove heavy backdrop blur on small devices */
+  nav, .skill-left{backdrop-filter:none}
+
+  /* make touch targets larger */
+  .btn{padding:14px 28px;font-size:14px}
+}
+
+/* touch-active class provides brief highlight on tap */
+.touch-active{transform:translateY(-6px) scale(1.01);box-shadow:0 18px 40px rgba(201,168,76,0.08);}
+
+@media (max-width:450px){
+  .section{padding:70px 18px}
+  .skills-list{margin-top:36px}
+  .skill-group{padding:18px}
+  .skill-card{padding:10px}
+  .skill-name{font-size:13px}
+  .skill-percent{font-size:12px}
 }
 
 </style>
@@ -1190,8 +1229,13 @@ body.light-theme .toggle-thumb{
     <div class="skill-groups">
       <div class="skill-group fade">
         <h3>Programming</h3>
-        <div class="skill-card" data-percentage="95">
-          <div class="skill-left" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="4" fill="black" fill-opacity="0.02"/><text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" font-family="JetBrains Mono,monospace" font-size="10" font-weight="800" fill="#000">Java</text></svg></div>
+        <div class="skill-card" data-percentage="95" tabindex="0">
+            <div class="skill-left" aria-hidden="false" aria-label="Java skill">
+              <svg width="36" height="36" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true">
+                <rect x="0" y="0" width="36" height="36" rx="8" fill="black" fill-opacity="0.02"/>
+                <text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" font-family="JetBrains Mono,monospace" font-size="12" font-weight="800" fill="#000">Java</text>
+              </svg>
+            </div>
           <div class="skill-body">
             <div class="skill-row"><div>
               <div class="skill-name">Java</div>
@@ -1204,8 +1248,13 @@ body.light-theme .toggle-thumb{
           </div>
         </div>
 
-        <div class="skill-card" data-percentage="80">
-          <div class="skill-left" aria-hidden="true">C</div>
+        <div class="skill-card" data-percentage="80" tabindex="0">
+          <div class="skill-left" aria-hidden="false" aria-label="C programming">
+            <svg width="36" height="36" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true">
+              <rect x="0" y="0" width="36" height="36" rx="8" fill="black" fill-opacity="0.02"/>
+              <text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" font-family="JetBrains Mono,monospace" font-size="14" font-weight="800" fill="#000">C</text>
+            </svg>
+          </div>
           <div class="skill-body">
             <div class="skill-row"><div>
               <div class="skill-name">C</div>
@@ -1218,8 +1267,13 @@ body.light-theme .toggle-thumb{
           </div>
         </div>
 
-        <div class="skill-card" data-percentage="75">
-          <div class="skill-left" aria-hidden="true">Py</div>
+        <div class="skill-card" data-percentage="75" tabindex="0">
+          <div class="skill-left" aria-hidden="false" aria-label="Python">
+            <svg width="36" height="36" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true">
+              <rect x="0" y="0" width="36" height="36" rx="8" fill="black" fill-opacity="0.02"/>
+              <text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" font-family="JetBrains Mono,monospace" font-size="12" font-weight="800" fill="#000">Py</text>
+            </svg>
+          </div>
           <div class="skill-body">
             <div class="skill-row"><div>
               <div class="skill-name">Python</div>
@@ -1235,8 +1289,13 @@ body.light-theme .toggle-thumb{
 
       <div class="skill-group fade">
         <h3>Frontend</h3>
-        <div class="skill-card" data-percentage="90">
-          <div class="skill-left" aria-hidden="true">HTML</div>
+        <div class="skill-card" data-percentage="90" tabindex="0">
+          <div class="skill-left" aria-hidden="false" aria-label="HTML5">
+            <svg width="36" height="36" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true">
+              <rect x="0" y="0" width="36" height="36" rx="8" fill="black" fill-opacity="0.02"/>
+              <text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" font-family="JetBrains Mono,monospace" font-size="12" font-weight="800" fill="#000">HTML</text>
+            </svg>
+          </div>
           <div class="skill-body">
             <div class="skill-row"><div>
               <div class="skill-name">HTML</div>
@@ -1249,8 +1308,13 @@ body.light-theme .toggle-thumb{
           </div>
         </div>
 
-        <div class="skill-card" data-percentage="85">
-          <div class="skill-left" aria-hidden="true">CSS</div>
+        <div class="skill-card" data-percentage="85" tabindex="0">
+          <div class="skill-left" aria-hidden="false" aria-label="CSS3">
+            <svg width="36" height="36" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true">
+              <rect x="0" y="0" width="36" height="36" rx="8" fill="black" fill-opacity="0.02"/>
+              <text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" font-family="JetBrains Mono,monospace" font-size="12" font-weight="800" fill="#000">CSS</text>
+            </svg>
+          </div>
           <div class="skill-body">
             <div class="skill-row"><div>
               <div class="skill-name">CSS</div>
@@ -1263,8 +1327,13 @@ body.light-theme .toggle-thumb{
           </div>
         </div>
 
-        <div class="skill-card" data-percentage="80">
-          <div class="skill-left" aria-hidden="true">JS</div>
+        <div class="skill-card" data-percentage="80" tabindex="0">
+          <div class="skill-left" aria-hidden="false" aria-label="JavaScript">
+            <svg width="36" height="36" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true">
+              <rect x="0" y="0" width="36" height="36" rx="8" fill="black" fill-opacity="0.02"/>
+              <text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" font-family="JetBrains Mono,monospace" font-size="12" font-weight="800" fill="#000">JS</text>
+            </svg>
+          </div>
           <div class="skill-body">
             <div class="skill-row"><div>
               <div class="skill-name">JavaScript</div>
@@ -1280,8 +1349,13 @@ body.light-theme .toggle-thumb{
 
       <div class="skill-group fade">
         <h3>Tools & Backend</h3>
-        <div class="skill-card" data-percentage="85">
-          <div class="skill-left" aria-hidden="true">Git</div>
+        <div class="skill-card" data-percentage="85" tabindex="0">
+          <div class="skill-left" aria-hidden="false" aria-label="Git">
+            <svg width="36" height="36" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true">
+              <rect x="0" y="0" width="36" height="36" rx="8" fill="black" fill-opacity="0.02"/>
+              <text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" font-family="JetBrains Mono,monospace" font-size="12" font-weight="800" fill="#000">Git</text>
+            </svg>
+          </div>
           <div class="skill-body">
             <div class="skill-row"><div>
               <div class="skill-name">Git</div>
@@ -1294,8 +1368,13 @@ body.light-theme .toggle-thumb{
           </div>
         </div>
 
-        <div class="skill-card" data-percentage="75">
-          <div class="skill-left" aria-hidden="true">SQL</div>
+        <div class="skill-card" data-percentage="75" tabindex="0">
+          <div class="skill-left" aria-hidden="false" aria-label="SQL">
+            <svg width="36" height="36" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true">
+              <rect x="0" y="0" width="36" height="36" rx="8" fill="black" fill-opacity="0.02"/>
+              <text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" font-family="JetBrains Mono,monospace" font-size="12" font-weight="800" fill="#000">SQL</text>
+            </svg>
+          </div>
           <div class="skill-body">
             <div class="skill-row"><div>
               <div class="skill-name">SQL</div>
@@ -1556,54 +1635,55 @@ links.forEach(link=>{
 
 // APPLE STYLE MOUSE GLOW
 
-const glow = document.createElement('div');
+const isTouch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
 
-glow.style.position = 'fixed';
-glow.style.width = '500px';
-glow.style.height = '500px';
-glow.style.borderRadius = '50%';
-glow.style.pointerEvents = 'none';
-glow.style.background = 'radial-gradient(circle, rgba(201,168,76,0.10), transparent 70%)';
-glow.style.transform = 'translate(-50%, -50%)';
-glow.style.zIndex = '0';
-glow.style.transition = 'transform 0.08s linear';
+let glow = null;
+if(!isTouch){
+  glow = document.createElement('div');
+  glow.style.position = 'fixed';
+  glow.style.width = '500px';
+  glow.style.height = '500px';
+  glow.style.borderRadius = '50%';
+  glow.style.pointerEvents = 'none';
+  glow.style.background = 'radial-gradient(circle, rgba(201,168,76,0.10), transparent 70%)';
+  glow.style.transform = 'translate(-50%, -50%)';
+  glow.style.zIndex = '0';
+  glow.style.transition = 'transform 0.08s linear';
+  document.body.appendChild(glow);
 
-document.body.appendChild(glow);
-
-window.addEventListener('mousemove',(e)=>{
-
-  glow.style.left = e.clientX + 'px';
-  glow.style.top = e.clientY + 'px';
-
-});
-
-// PREMIUM CARD HOVER
-
-const cards = document.querySelectorAll('.skill-item, .project-card, .about-card');
-
-cards.forEach(card=>{
-
-  card.addEventListener('mousemove',(e)=>{
-
-    const rect = card.getBoundingClientRect();
-
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    const rotateY = ((x / rect.width) - 0.5) * 8;
-    const rotateX = ((y / rect.height) - 0.5) * -8;
-
-    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-8px)`;
-
+  window.addEventListener('mousemove',(e)=>{
+    glow.style.left = e.clientX + 'px';
+    glow.style.top = e.clientY + 'px';
   });
+} else {
+  // On touch devices, don't create the glow (saves battery). Provide a quick touch feedback instead.
+}
 
-  card.addEventListener('mouseleave',()=>{
 
-    card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px)';
-
+// PREMIUM CARD HOVER (desktop only)
+if(!isTouch){
+  const cards = document.querySelectorAll('.skill-card, .project-card, .about-card');
+  cards.forEach(card=>{
+    card.addEventListener('mousemove',(e)=>{
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const rotateY = ((x / rect.width) - 0.5) * 8;
+      const rotateX = ((y / rect.height) - 0.5) * -8;
+      card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-8px)`;
+    });
+    card.addEventListener('mouseleave',()=>{ card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px)'; });
   });
-
-});
+} else {
+  // Touch fallback: quick tap highlight
+  const touchCards = document.querySelectorAll('.skill-card');
+  touchCards.forEach(c=>{
+    c.addEventListener('touchstart', ()=>{
+      c.classList.add('touch-active');
+    });
+    c.addEventListener('touchend', ()=>{ setTimeout(()=>c.classList.remove('touch-active'), 250); });
+  });
+}
 
 // HERO FADE TEXT
 
