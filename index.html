@@ -30,8 +30,6 @@ OK -->
 content="Cherukuri Raghuveer Portfolio Website">
 
 <link rel="manifest" href="site.webmanifest">
-```
-
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Raghuveer.dev</title>
@@ -216,7 +214,10 @@ nav{
 
   border-bottom:
   1px solid rgba(255,255,255,0.05);
+  transition:transform .35s ease, background .45s ease, box-shadow .45s ease;
 }
+
+.nav-hidden{transform:translateY(-120%);pointer-events:none}
 
 /* LOGO */
 
@@ -265,6 +266,32 @@ nav{
 
 .nav-links a:hover{
   color:var(--gold);
+}
+
+/* Animated underline and entrance */
+.nav-links li{opacity:0;transform:translateY(-6px);transition:opacity .45s ease,transform .45s cubic-bezier(.16,1,.3,1)}
+.nav-links li.show{opacity:1;transform:none}
+.nav-links a{position:relative}
+.nav-links a::after{content:'';position:absolute;left:50%;transform:translateX(-50%) scaleX(0);bottom:-10px;width:60%;height:2px;background:var(--gold);border-radius:2px;transform-origin:center;transition:transform .32s cubic-bezier(.16,1,.3,1),opacity .3s}
+.nav-links a:hover::after,.nav-links a.active::after{transform:translateX(-50%) scaleX(1);opacity:1}
+
+/* Hamburger button */
+.hamburger{display:none;border:0;background:transparent;cursor:pointer;padding:8px;align-self:center}
+.hamburger span{display:block;width:24px;height:2px;background:var(--text);margin:5px 0;transition:all .35s}
+.hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.hamburger.open span:nth-child(2){opacity:0}
+.hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+/* Mobile nav (slide down) */
+.mobile-nav{position:fixed;top:76px;left:0;right:0;background:linear-gradient(180deg, rgba(5,5,5,0.9), rgba(5,5,5,0.95));backdrop-filter:blur(8px);padding:20px 24px;display:flex;flex-direction:column;gap:16px;transform:translateY(-120%);transition:transform .45s cubic-bezier(.16,1,.3,1);z-index:998}
+.mobile-nav.open{transform:translateY(0)}
+.mobile-nav a{color:var(--text);text-decoration:none;font-weight:700;padding:8px 12px;border-radius:8px}
+
+/* Nav scrolled state */
+nav.scrolled{background:rgba(5,5,5,0.72);box-shadow:0 6px 30px rgba(0,0,0,0.45)}
+
+@media(max-width:950px){
+  .hamburger{display:block}
 }
 
 /* TOGGLE RIGHT SIDE */
@@ -329,6 +356,30 @@ nav{
   pointer-events:none;
 }
 
+.hero-blob{
+  position:absolute;
+  right:-120px;
+  top:-80px;
+  width:640px;
+  height:640px;
+  background:linear-gradient(135deg, rgba(201,168,76,0.12), rgba(240,215,141,0.06));
+  filter:blur(48px);
+  border-radius:40% 60% 40% 60% / 60% 40% 60% 40%;
+  transform:rotate(12deg) scale(1);
+  animation:blobMove 10s ease-in-out infinite;
+  z-index:0;
+  pointer-events:none;
+}
+
+@keyframes blobMove{
+  0%{transform:translateY(0) rotate(0deg) scale(1);}
+  50%{transform:translateY(30px) rotate(6deg) scale(1.05);}
+  100%{transform:translateY(0) rotate(0deg) scale(1);}
+}
+
+.hero-right{z-index:2;}
+.hero-left{z-index:2;}
+
 .hero-grid{
   display:grid;
   grid-template-columns:1fr 1fr;
@@ -366,6 +417,20 @@ nav{
   line-height:.82;
   letter-spacing:-7px;
   text-transform:uppercase;
+  background:linear-gradient(90deg,var(--text),var(--gold2));
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  -webkit-text-fill-color:transparent;
+  text-shadow:0 6px 18px rgba(0,0,0,0.45);
+}
+
+.hero-sub{
+  margin-top:18px;
+  font-family:var(--mono);
+  color:var(--muted);
+  font-size:16px;
+  letter-spacing:.18em;
 }
 
 .hero-title em{
@@ -419,6 +484,27 @@ nav{
   color:var(--gold);
   transform:translateY(-4px);
 }
+
+/* BUTTON RIPPLE */
+.btn{position:relative;overflow:hidden}
+.btn:after{content:'';position:absolute;border-radius:50%;background:rgba(0,0,0,0.08);transform:scale(0);opacity:0;transition:transform .5s,opacity .8s}
+.btn:active:after{transform:scale(6);opacity:1;transition:0s}
+
+/* SKILLS PROGRESS (large, standalone) */
+.skills-progress{
+  margin-top:48px;
+  background:transparent;
+  border:0;
+  padding:0;
+  border-radius:0;
+  max-width:100%;
+}
+.skill-row{display:flex;align-items:center;gap:24px;margin-bottom:22px}
+.skill-label{width:260px;display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-family:var(--mono);font-size:16px}
+.skill-label strong{color:var(--text);font-size:20px}
+.skill-label span{color:var(--gold);font-weight:800;font-size:16px}
+.progress-track{height:20px;background:rgba(255,255,255,0.03);border-radius:999px;overflow:hidden;border:1px solid rgba(255,255,255,0.03);flex:1}
+.progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--gold2));border-radius:999px;transition:width 1.2s cubic-bezier(.16,1,.3,1);box-shadow:0 10px 30px rgba(201,168,76,0.08)}
 
 .hero-stats{
   margin-top:90px;
@@ -537,58 +623,80 @@ nav{
 .skills{
   background:var(--bg2);
 }
+/* Skills: premium animated cards + progress bars */
+.skills-list{margin-top:60px}
+.skill-groups{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.skill-group{background:var(--card);border:1px solid var(--border);padding:28px;border-radius:14px;box-shadow:0 8px 40px rgba(0,0,0,0.45);}
+.skill-group h3{font-family:var(--display);font-size:20px;margin-bottom:18px;color:var(--gold);letter-spacing:.12em}
+.skill-group{position:relative;overflow:hidden;border-color:rgba(201,168,76,0.06);background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.06));}
+.skill-group::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(135deg, rgba(255,255,255,0.02) 0 2px, transparent 2px 10px);opacity:0.03;pointer-events:none}
+.skill-card{display:flex;gap:18px;align-items:center;padding:18px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.02));border-radius:14px;margin-bottom:14px;border:1px solid rgba(255,255,255,0.03);transition:transform .38s cubic-bezier(.16,1,.3,1),box-shadow .38s ease;transform-style:preserve-3d}
+.skill-card:hover{transform:translateY(-12px) rotateX(2deg) scale(1.02);box-shadow:0 24px 60px rgba(201,168,76,0.10), inset 0 0 60px rgba(201,168,76,0.02);border-color:rgba(201,168,76,0.22)}
+.skill-left{width:64px;height:64px;flex:0 0 64px;border-radius:12px;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:800;color:#000;box-shadow:inset 0 -6px 18px rgba(0,0,0,0.25), 0 6px 18px rgba(0,0,0,0.35);backdrop-filter:blur(6px);font-size:14px;line-height:1;position:relative}
+.skill-left::after{content:'';position:absolute;inset:5px;border-radius:10px;border:1px solid rgba(255,255,255,0.02);box-shadow:inset 0 6px 18px rgba(255,255,255,0.02)}
+.skill-body{flex:1;min-width:0}
+.skill-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.skill-name{font-family:var(--display);font-size:16px}
+.skill-category{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.12em}
+.skill-percent{font-family:var(--mono);font-weight:800;color:var(--gold);transition:transform .28s, color .28s}
+.progress{height:16px;background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06));border-radius:999px;position:relative;overflow:hidden;border:1px solid rgba(255,255,255,0.04);background-image:repeating-linear-gradient(90deg, rgba(255,255,255,0.01) 0 2px, transparent 2px 12px);mix-blend-mode:overlay}
+.progress-fill{position:absolute;left:0;top:0;bottom:0;width:0%;background:linear-gradient(90deg,var(--gold),#fff,var(--gold2));background-size:300% 100%;border-radius:999px;box-shadow:0 12px 46px rgba(201,168,76,0.12);transition:width 1.6s cubic-bezier(.16,1,.3,1);will-change:width,transform}
+.progress-fill::after{content:'';position:absolute;right:-40%;top:0;bottom:0;width:40%;background:linear-gradient(90deg,rgba(255,255,255,0.18),rgba(255,255,255,0.02));transform:skewX(-18deg);opacity:0.12;filter:blur(6px)}
+.progress-glow{position:absolute;left:0;top:-8px;height:30px;width:0;background:linear-gradient(90deg,var(--gold),var(--gold2));filter:blur(20px);opacity:0.6;border-radius:999px;pointer-events:none;transition:width 1.6s cubic-bezier(.16,1,.3,1),left .35s}
 
-.skills-grid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:30px;
-  margin-top:90px;
+@keyframes sheenMove{0%{background-position:0% 50%}100%{background-position:100% 50%}}
+.progress-fill.animate{animation:sheenMove 2.8s linear infinite}
+
+.progress-dot{position:absolute;top:50%;left:0;width:14px;height:14px;border-radius:50%;transform:translate(-50%,-50%);background:linear-gradient(180deg,var(--gold),var(--gold2));box-shadow:0 10px 30px rgba(201,168,76,0.32),0 0 40px rgba(201,168,76,0.06);transition:left 1.6s cubic-bezier(.16,1,.3,1),transform .28s;pointer-events:none}
+.progress-dot.pulse{animation:pulseGlow 1.6s ease-in-out infinite}
+@keyframes pulseGlow{0%{transform:translate(-50%,-50%) scale(1);filter:blur(0)}50%{transform:translate(-50%,-50%) scale(1.12);filter:blur(2px)}100%{transform:translate(-50%,-50%) scale(1);filter:blur(0)}}
+
+/* moving dot that follows the progress edge */
+.progress-dot{position:absolute;top:50%;left:0;width:12px;height:12px;border-radius:50%;transform:translate(-50%,-50%);background:linear-gradient(180deg,var(--gold),var(--gold2));box-shadow:0 6px 22px rgba(201,168,76,0.28);transition:left 1.6s cubic-bezier(.16,1,.3,1),transform .28s;pointer-events:none}
+
+/* subtle icon float on hover */
+.skill-card:hover .skill-left{transform:translateY(-4px)}
+
+/* shimmer sweep */
+@keyframes shimmerMove{from{transform:translateX(-120%)}to{transform:translateX(120%)}}
+.progress-fill .shimmer{position:absolute;left:0;top:0;bottom:0;width:18%;background:linear-gradient(90deg, transparent, rgba(255,255,255,0.22), transparent);transform:translateX(-120%);pointer-events:none;opacity:0.85}
+.progress-fill.animate .shimmer{animation:shimmerMove 1.8s ease-in-out forwards}
+
+/* accessibility: respect reduced motion */
+@media (prefers-reduced-motion: reduce){
+  .skill-card, .progress-fill{transition:none !important;}
+  .progress-fill .shimmer{animation:none}
 }
 
-.skill-card{
-  background:var(--card);
-  border:1px solid var(--border);
-  padding:60px 45px;
-  border-radius:14px;
-  transition:.35s;
+@media(max-width:1100px){.skill-groups{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:700px){.skill-groups{grid-template-columns:1fr}}
+
+/* Mobile / Phone alignment tweaks */
+@media (max-width:700px){
+  .skill-group{padding:20px}
+  .skill-card{padding:14px;gap:12px;border-radius:12px}
+  .skill-left{width:56px;height:56px;flex:0 0 56px}
+  .skill-name{font-size:15px}
+  .skill-category{font-size:11px}
+  .skill-percent{font-size:13px;min-width:48px;flex-shrink:0;text-align:right}
+  .progress{height:14px}
+  .progress-glow{top:-7px;height:28px}
 }
 
-.skill-card:hover{
-  transform:translateY(-8px);
-  border-color:rgba(201,168,76,0.35);
-}
-
-.skill-number{
-  color:var(--gold);
-  font-family:var(--mono);
-  margin-bottom:30px;
-}
-
-.skill-title{
-  font-size:38px;
-  margin-bottom:20px;
-  font-family:var(--display);
-}
-
-.skill-desc{
-  color:var(--muted);
-  line-height:2;
-  margin-bottom:30px;
-}
-
-.skill-tags{
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-}
-
-.skill-tags span{
-  border:1px solid rgba(255,255,255,0.08);
-  padding:8px 14px;
-  border-radius:4px;
-  font-size:11px;
-  color:var(--gold);
-  font-family:var(--mono);
+@media (max-width:450px){
+  .skill-groups{gap:14px}
+  .skill-card{padding:12px;gap:10px}
+  .skill-card{align-items:center}
+  .skill-left{width:48px;height:48px;flex:0 0 48px}
+  .skill-body{min-width:0}
+  .skill-row{gap:8px}
+  .skill-name{font-size:14px}
+  .skill-category{font-size:10px}
+  .skill-percent{min-width:44px;flex:0 0 44px;text-align:right}
+  .progress{height:12px}
+  .progress-fill::after{right:-30%}
+  .progress-dot{width:12px;height:12px}
+  .skill-group h3{font-size:18px}
 }
 
 /* PROJECTS */
@@ -879,7 +987,7 @@ body.light-theme .toggle-thumb{
   }
 
   .about-grid,
-  .skills-grid,
+  .skills-list,
   .projects-grid{
     grid-template-columns:1fr;
   }
@@ -912,6 +1020,11 @@ body.light-theme .toggle-thumb{
 
 <nav>
   <div class="logo">Build By <span>Raghuveer</span>.</div>
+  <button class="hamburger" id="hamburger" aria-label="Toggle navigation" aria-expanded="false">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
 
   <ul class="nav-links">
     <li><a href="#about">About</a></li>
@@ -926,6 +1039,13 @@ body.light-theme .toggle-thumb{
 </div>
 </nav>
 
+<div class="mobile-nav" id="mobileNav" aria-hidden="true">
+  <a href="#about">About</a>
+  <a href="#skills">Skills</a>
+  <a href="#projects">Projects</a>
+  <a href="#contact">Contact</a>
+</div>
+
 <!-- HERO -->
 
 <section class="hero">
@@ -933,6 +1053,8 @@ body.light-theme .toggle-thumb{
   <div class="hero-bg">RAGHUVEER</div>
 
   <div class="hero-grid">
+
+    <div class="hero-blob" aria-hidden="true"></div>
 
     <div class="hero-left fade">
 
@@ -944,6 +1066,8 @@ body.light-theme .toggle-thumb{
         CHERUKURI<br>
         <em>RAGHUVEER</em>
       </h1>
+
+      <div class="hero-sub" aria-hidden="false"><span id="typed">Full Stack Engineer</span></div>
 
     </div>
 
@@ -1062,70 +1186,130 @@ body.light-theme .toggle-thumb{
     <em>digital systems.</em>
   </h2>
 
-  <div class="skills-grid">
+  <div class="skills-list">
+    <div class="skill-groups">
+      <div class="skill-group fade">
+        <h3>Programming</h3>
+        <div class="skill-card" data-percentage="95">
+          <div class="skill-left" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="4" fill="black" fill-opacity="0.02"/><text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" font-family="JetBrains Mono,monospace" font-size="10" font-weight="800" fill="#000">Java</text></svg></div>
+          <div class="skill-body">
+            <div class="skill-row"><div>
+              <div class="skill-name">Java</div>
+              <div class="skill-category">Programming</div>
+            </div><div class="skill-percent">95%</div></div>
+            <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+              <div class="progress-fill" data-target="95"><div class="shimmer"></div></div>
+              <div class="progress-glow"></div>
+            </div>
+          </div>
+        </div>
 
-    <div class="skill-card fade">
+        <div class="skill-card" data-percentage="80">
+          <div class="skill-left" aria-hidden="true">C</div>
+          <div class="skill-body">
+            <div class="skill-row"><div>
+              <div class="skill-name">C</div>
+              <div class="skill-category">Programming</div>
+            </div><div class="skill-percent">80%</div></div>
+            <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+              <div class="progress-fill" data-target="80"><div class="shimmer"></div></div>
+              <div class="progress-glow"></div>
+            </div>
+          </div>
+        </div>
 
-      <div class="skill-number">01</div>
-
-      <div class="skill-title">Java</div>
-
-      <div class="skill-desc">
-       Building efficient and scalable applications using Java, object-oriented programming, 
-       data structures & algorithms, and clean coding principles.
+        <div class="skill-card" data-percentage="75">
+          <div class="skill-left" aria-hidden="true">Py</div>
+          <div class="skill-body">
+            <div class="skill-row"><div>
+              <div class="skill-name">Python</div>
+              <div class="skill-category">Programming</div>
+            </div><div class="skill-percent">75%</div></div>
+            <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+              <div class="progress-fill" data-target="75"><div class="shimmer"></div></div>
+              <div class="progress-glow"></div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div class="skill-tags">
-        <span>Java</span>
-        <span>Spring Boot</span>
-        <span>Data Structures and Algorithms</span>
-        <span>REST API</span>
+      <div class="skill-group fade">
+        <h3>Frontend</h3>
+        <div class="skill-card" data-percentage="90">
+          <div class="skill-left" aria-hidden="true">HTML</div>
+          <div class="skill-body">
+            <div class="skill-row"><div>
+              <div class="skill-name">HTML</div>
+              <div class="skill-category">Frontend</div>
+            </div><div class="skill-percent">90%</div></div>
+            <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+              <div class="progress-fill" data-target="90"><div class="shimmer"></div></div>
+              <div class="progress-glow"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="skill-card" data-percentage="85">
+          <div class="skill-left" aria-hidden="true">CSS</div>
+          <div class="skill-body">
+            <div class="skill-row"><div>
+              <div class="skill-name">CSS</div>
+              <div class="skill-category">Frontend</div>
+            </div><div class="skill-percent">85%</div></div>
+            <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+              <div class="progress-fill" data-target="85"><div class="shimmer"></div></div>
+              <div class="progress-glow"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="skill-card" data-percentage="80">
+          <div class="skill-left" aria-hidden="true">JS</div>
+          <div class="skill-body">
+            <div class="skill-row"><div>
+              <div class="skill-name">JavaScript</div>
+              <div class="skill-category">Frontend</div>
+            </div><div class="skill-percent">80%</div></div>
+            <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+              <div class="progress-fill" data-target="80"><div class="shimmer"></div></div>
+              <div class="progress-glow"></div>
+            </div>
+          </div>
+        </div>
       </div>
 
+      <div class="skill-group fade">
+        <h3>Tools & Backend</h3>
+        <div class="skill-card" data-percentage="85">
+          <div class="skill-left" aria-hidden="true">Git</div>
+          <div class="skill-body">
+            <div class="skill-row"><div>
+              <div class="skill-name">Git</div>
+              <div class="skill-category">Tools</div>
+            </div><div class="skill-percent">85%</div></div>
+            <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+              <div class="progress-fill" data-target="85"><div class="shimmer"></div></div>
+              <div class="progress-glow"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="skill-card" data-percentage="75">
+          <div class="skill-left" aria-hidden="true">SQL</div>
+          <div class="skill-body">
+            <div class="skill-row"><div>
+              <div class="skill-name">SQL</div>
+              <div class="skill-category">Backend</div>
+            </div><div class="skill-percent">75%</div></div>
+            <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+              <div class="progress-fill" data-target="75"><div class="shimmer"></div></div>
+              <div class="progress-glow"></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
     </div>
-
-    <div class="skill-card fade">
-
-      <div class="skill-number">02</div>
-
-      <div class="skill-title">Frontend</div>
-
-      <div class="skill-desc">
-        Creating premium interfaces with responsive layouts,
-        modern animations, React components, and smooth user experiences.
-      </div>
-
-      <div class="skill-tags">
-        <span>React</span>
-        <span>HTML5</span>
-        <span>CSS3</span>
-        <span>JavaScript</span>
-        <span>Tailwind</span>
-      </div>
-
-    </div>
-
-    <div class="skill-card fade">
-
-      <div class="skill-number">03</div>
-
-      <div class="skill-title">Databases</div>
-
-      <div class="skill-desc">
-        Designing optimized schemas and handling data efficiently
-        with SQL systems, ORM tools, and scalable backend integration.
-      </div>
-
-      <div class="skill-tags">
-        <span>MySQL</span>
-        <span>PostgreSQL</span>
-        <span>Git</span>
-        <span>JPA</span>
-        <span>SQL</span>
-      </div>
-
-    </div>
-
   </div>
 
 </section>
@@ -1395,7 +1579,7 @@ window.addEventListener('mousemove',(e)=>{
 
 // PREMIUM CARD HOVER
 
-const cards = document.querySelectorAll('.skill-card, .project-card, .about-card');
+const cards = document.querySelectorAll('.skill-item, .project-card, .about-card');
 
 cards.forEach(card=>{
 
@@ -1434,408 +1618,236 @@ window.addEventListener('scroll',()=>{
 
 });
 
-</script>
-```html
-<!-- =========================================
-ADD THIS ENTIRE SECTION AT THE VERY END
-OF YOUR CURRENT CSS
-========================================= -->
+/* ------------------------------
+   Skills animated progress bars
+   - animate on first reveal
+   - staggered entry
+   - respects prefers-reduced-motion
+------------------------------- */
 
-<style>
+(() => {
+  const skillsSection = document.getElementById('skills');
+  if(!skillsSection) return;
 
-/* =========================================
-   ADVANCED MOBILE OPTIMIZATION
-========================================= */
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-@media (max-width: 768px){
+  const skillCards = skillsSection.querySelectorAll('.skill-card');
 
-  html,body{
-    overflow-x:hidden;
-    width:100%;
+  function animateOnce() {
+    skillCards.forEach((card, i) => {
+      const fill = card.querySelector('.progress-fill');
+      const glow = card.querySelector('.progress-glow');
+      const pct = parseInt(fill.dataset.target || card.dataset.percentage || '0', 10);
+      const percentLabel = card.querySelector('.skill-percent');
+
+      const delay = i * 140;
+
+      if(reduced){
+        fill.style.width = pct + '%';
+        if(glow) glow.style.width = pct + '%';
+        if(percentLabel) percentLabel.textContent = pct + '%';
+        fill.classList.add('animate');
+        return;
+      }
+
+      setTimeout(()=>{
+        // width transition
+        fill.style.width = pct + '%';
+        if(glow) glow.style.width = pct + '%';
+        fill.classList.add('animate');
+
+        // place or create a progress-dot that follows the edge
+        const container = card.querySelector('.progress');
+        let dot = container.querySelector('.progress-dot');
+        if(!dot){
+          dot = document.createElement('div');
+          dot.className = 'progress-dot';
+          container.appendChild(dot);
+        }
+        // move dot to pct% (container-relative)
+        requestAnimationFrame(()=>{
+          dot.style.left = pct + '%';
+          dot.classList.add('pulse');
+        });
+
+        // numeric counter with cubic easing
+        if(percentLabel){
+          const duration = 950;
+          const startTime = performance.now();
+          function step(now){
+            const t = Math.min(1, (now - startTime) / duration);
+            const eased = 1 - Math.pow(1 - t, 3);
+            const v = Math.round(eased * pct);
+            percentLabel.textContent = v + '%';
+            if(t < 1) requestAnimationFrame(step);
+          }
+          requestAnimationFrame(step);
+        }
+
+        // glow overshoot for a punchy effect then settle to exact pct
+        if(glow){
+          const overshoot = Math.min(100, pct + 6);
+          glow.style.width = overshoot + '%';
+          setTimeout(()=>{ glow.style.width = pct + '%'; }, 520);
+        }
+
+        // update aria-valuenow so assistive tech sees the final value
+        const prog = card.querySelector('.progress');
+        if(prog) prog.setAttribute('aria-valuenow', pct);
+
+      }, delay + 120);
+    });
   }
 
-  body{
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  /* NAVBAR */
-
-  nav{
-    padding:16px 18px;
-    height:auto;
-  }
-
-  .logo{
-    font-size:18px;
-  }
-
-  .nav-links{
-    display:none;
-  }
-
-  /* HERO */
-
-  .hero{
-    padding:120px 20px 70px;
-    min-height:auto;
-  }
-
-  .hero-grid{
-    grid-template-columns:1fr;
-    gap:40px;
-  }
-
-  .hero-title{
-    font-size:52px;
-    line-height:.92;
-    letter-spacing:-2px;
-    word-break:break-word;
-  }
-
-  .hero-tag{
-    font-size:10px;
-    margin-bottom:20px;
-  }
-
-  .hero-desc{
-    font-size:15px;
-    line-height:1.8;
-    padding-left:16px;
-    margin-bottom:30px;
-  }
-
-  .hero-bg{
-    font-size:90px;
-    left:-10px;
-    bottom:-30px;
-  }
-
-  /* BUTTONS */
-
-  .hero-buttons,
-  .contact-buttons{
-    flex-direction:column;
-    width:100%;
-    gap:14px;
-  }
-
-  .btn{
-    width:100%;
-    text-align:center;
-    padding:15px 20px;
-    font-size:11px;
-  }
-
-  /* STATS */
-
-  .hero-stats{
-    gap:25px;
-    justify-content:flex-start;
-    margin-top:50px;
-    padding-top:30px;
-  }
-
-  .stat h2{
-    font-size:36px;
-  }
-
-  .stat p{
-    font-size:10px;
-  }
-
-  /* SECTIONS */
-
-  .section{
-    padding:80px 20px;
-  }
-
-  .section-title{
-    font-size:44px;
-    line-height:1;
-    letter-spacing:-2px;
-  }
-
-  .section-title-small{
-    font-size:10px;
-    margin-bottom:20px;
-  }
-
-  /* ABOUT */
-
-  .about-grid{
-    grid-template-columns:1fr;
-    gap:30px;
-    margin-top:50px;
-  }
-
-  .about-text{
-    font-size:16px;
-    line-height:1.9;
-  }
-
-  .about-card{
-    padding:28px 22px;
-  }
-
-  .about-item{
-    gap:14px;
-    flex-direction:column;
-    align-items:flex-start;
-  }
-
-  /* SKILLS */
-
-  .skills-grid{
-    grid-template-columns:1fr;
-    margin-top:50px;
-    gap:20px;
-  }
-
-  .skill-card{
-    padding:35px 24px;
-  }
-
-  .skill-title{
-    font-size:28px;
-  }
-
-  .skill-desc{
-    font-size:15px;
-    line-height:1.8;
-  }
-
-  /* PROJECTS */
-
-  .projects-grid{
-    grid-template-columns:1fr;
-    gap:22px;
-    margin-top:50px;
-  }
-
-  .project-card{
-    padding:32px 24px;
-  }
-
-  .project-title{
-    font-size:30px;
-    line-height:1;
-  }
-
-  .project-desc{
-    font-size:15px;
-    line-height:1.8;
-  }
-
-  /* LEARNING */
-
-  .learning-box{
-    padding:35px 22px;
-    margin-top:50px;
-  }
-
-  .learning-title{
-    font-size:38px;
-    line-height:1;
-  }
-
-  .learning-desc{
-    font-size:15px;
-    line-height:1.8;
-  }
-
-  /* CONTACT */
-
-  .contact-title{
-    font-size:52px;
-    line-height:.95;
-    letter-spacing:-2px;
-  }
-
-  .contact-text{
-    font-size:15px;
-    line-height:1.8;
-  }
-
-  /* FOOTER */
-
-  footer{
-    padding:28px 20px;
-    flex-direction:column;
-    gap:18px;
-    text-align:center;
-  }
-
-  .footer-links{
-    flex-wrap:wrap;
-    justify-content:center;
-    gap:18px;
-  }
-
-  /* PERFORMANCE FIXES */
-
-  .fade{
-    transform:none !important;
-    filter:none !important;
-  }
-
-  .fade.show{
-    transform:none !important;
-  }
-
-  /* DISABLE HEAVY EFFECTS ON MOBILE */
-
-  .hero-left::before{
-    display:none;
-  }
-
-}
-
-/* EXTRA SMALL DEVICES */
-
-@media (max-width:480px){
-
-  .hero-title{
-    font-size:42px;
-  }
-
-  .section-title{
-    font-size:36px;
-  }
-
-  .contact-title{
-    font-size:42px;
-  }
-
-  .project-title{
-    font-size:26px;
-  }
-
-  .learning-title{
-    font-size:32px;
-  }
-
-}
-
-</style>
-
-
-
-<!-- =========================================
-REPLACE YOUR CURRENT MOUSE GLOW JS WITH THIS
-========================================= -->
-
-<script>
-
-if(window.innerWidth > 768){
-
-const glow = document.createElement('div');
-
-glow.style.position = 'fixed';
-glow.style.width = '500px';
-glow.style.height = '500px';
-glow.style.borderRadius = '50%';
-glow.style.pointerEvents = 'none';
-glow.style.background =
-'radial-gradient(circle, rgba(201,168,76,0.10), transparent 70%)';
-
-glow.style.transform = 'translate(-50%, -50%)';
-glow.style.zIndex = '0';
-glow.style.transition = 'transform 0.08s linear';
-
-document.body.appendChild(glow);
-
-window.addEventListener('mousemove',(e)=>{
-
-  glow.style.left = e.clientX + 'px';
-  glow.style.top = e.clientY + 'px';
-
+  const io = new IntersectionObserver((entries, obs)=>{
+    entries.forEach(ent=>{
+      if(ent.isIntersecting){
+        animateOnce();
+        obs.unobserve(ent.target);
+      }
+    });
+  },{threshold:0.18});
+
+  io.observe(skillsSection);
+
+})();
+
+// THEME TOGGLE (persisted)
+const themeToggle = document.getElementById('themeToggle');
+const savedTheme = localStorage.getItem('theme');
+if(savedTheme === 'light') document.body.classList.add('light-theme');
+
+themeToggle.addEventListener('click', () => {
+  const isLight = document.body.classList.toggle('light-theme');
+  localStorage.setItem('theme', isLight ? 'light' : 'dark');
 });
 
+// continue with typed/mobile nav script
+// Typed subtitle effect
+const typedEl = document.getElementById('typed');
+const words = ['Full Stack Engineer','Java & Android','React Frontend','Spring Backend','Design-minded'];
+let widx = 0; let cidx = 0; let forward = true;
+function tick(){
+  const word = words[widx];
+  if(forward){
+    typedEl.textContent = word.slice(0, ++cidx);
+    if(cidx === word.length) { forward=false; setTimeout(tick,1200); return; }
+  } else {
+    typedEl.textContent = word.slice(0, --cidx);
+    if(cidx === 0){ forward=true; widx=(widx+1)%words.length; }
+  }
+  setTimeout(tick, forward?80:40);
 }
+tick();
 
-</script>
+// Mobile nav toggle
+const hamburger = document.getElementById('hamburger');
+const mobileNav = document.getElementById('mobileNav');
+hamburger.addEventListener('click', ()=>{
+  const open = hamburger.classList.toggle('open');
+  mobileNav.classList.toggle('open');
+  hamburger.setAttribute('aria-expanded', open);
+  mobileNav.setAttribute('aria-hidden', !open);
+});
 
+// close mobile nav on link click
+mobileNav.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{
+  hamburger.classList.remove('open'); mobileNav.classList.remove('open');
+  hamburger.setAttribute('aria-expanded', false);
+  mobileNav.setAttribute('aria-hidden', true);
+}));
 
+// Nav entrance animation
+document.addEventListener('DOMContentLoaded', ()=>{
+  const items = document.querySelectorAll('.nav-links li');
+  items.forEach((it, i)=> setTimeout(()=> it.classList.add('show'), i * 80));
+  // set initial active link
+  setActiveLink();
+});
 
-<!-- =========================================
-REPLACE YOUR CURRENT CARD HOVER JS WITH THIS
-========================================= -->
-
-<script>
-
-if(window.innerWidth > 768){
-
-const cards = document.querySelectorAll(
-'.skill-card, .project-card, .about-card'
-);
-
-cards.forEach(card=>{
-
-  card.addEventListener('mousemove',(e)=>{
-
-    const rect = card.getBoundingClientRect();
-
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    const rotateY = ((x / rect.width) - 0.5) * 8;
-    const rotateX = ((y / rect.height) - 0.5) * -8;
-
-    card.style.transform =
-    `perspective(1000px)
-     rotateX(${rotateX}deg)
-     rotateY(${rotateY}deg)
-     translateY(-8px)`;
-
+// Active link on scroll + nav scrolled state
+const nav = document.querySelector('nav');
+const sections = document.querySelectorAll('section[id]');
+function setActiveLink(){
+  let current = null;
+  sections.forEach(sec=>{
+    const rect = sec.getBoundingClientRect();
+    if(rect.top <= 120 && rect.bottom > 120) current = sec.id;
   });
-
-  card.addEventListener('mouseleave',()=>{
-
-    card.style.transform =
-    'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px)';
-
+  document.querySelectorAll('.nav-links a').forEach(a=>{
+    a.classList.toggle('active', a.getAttribute('href') === `#${current}`);
   });
+}
 
+window.addEventListener('scroll', ()=>{
+  if(window.scrollY > 20) nav.classList.add('scrolled'); else nav.classList.remove('scrolled');
+  setActiveLink();
 });
 
-}
+// close mobile nav with Escape
+document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape'){ hamburger.classList.remove('open'); mobileNav.classList.remove('open'); mobileNav.setAttribute('aria-hidden', true); hamburger.setAttribute('aria-expanded', false); } });
 
-</script>
-<script>
-
-/* =========================
-   THEME TOGGLE
-========================= */
-
-const themeToggle =
-document.getElementById('themeToggle');
-
-const savedTheme =
-localStorage.getItem('theme');
-
-if(savedTheme === 'light'){
-
-  document.body.classList.add('light-theme');
-
-}
-
-themeToggle.addEventListener('click',()=>{
-
-  document.body.classList.toggle('light-theme');
-
-  if(document.body.classList.contains('light-theme')){
-
-    localStorage.setItem('theme','light');
-
-  }else{
-
-    localStorage.setItem('theme','dark');
-
+// Hide-on-scroll: hide when scrolling down, show when scrolling up
+let lastScrollY = window.scrollY;
+const delta = 10;
+window.addEventListener('scroll', ()=>{
+  const current = window.scrollY;
+  // don't hide nav when mobile menu is open
+  if(mobileNav && mobileNav.classList.contains('open')){ lastScrollY = current; return; }
+  if(Math.abs(current - lastScrollY) <= delta) return;
+  if(current > lastScrollY && current > 80){
+    nav.classList.add('nav-hidden');
+  } else {
+    nav.classList.remove('nav-hidden');
   }
-
+  lastScrollY = current;
 });
 
-</script>
+  // Animate radial progress when visible
+  const progressItems = document.querySelectorAll('.radial-fg');
+  const progObserver = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        const el = entry.target; // <circle class="radial-fg">
+        const value = parseInt(el.getAttribute('data-value')) || 0;
+        const r = el.r.baseVal.value;
+        const c = 2 * Math.PI * r;
+        // ensure dasharray set
+        el.style.strokeDasharray = c;
+        // start from full circle
+        el.style.strokeDashoffset = c;
+        // compute target offset for value%
+        const target = c * (1 - value / 100);
+        // small delay to allow initial styles to apply
+        setTimeout(()=>{ el.style.strokeDashoffset = target; }, 50);
 
+        // animate numeric counters (card label + inside svg text)
+        const svg = el.closest('svg');
+        const svgText = svg ? svg.querySelector('.radial-text') : null;
+        const card = el.closest('.skill-item');
+        const percentLabel = card ? card.querySelector('.skill-percent') : null;
+
+        const duration = 1000; // ms
+        const start = performance.now();
+        const startVal = 0;
+        function step(now){
+          const elapsed = now - start;
+          const t = Math.min(1, elapsed / duration);
+          const current = Math.round(startVal + (value - startVal) * t);
+          if(percentLabel) percentLabel.textContent = current + '%';
+          if(svgText) svgText.textContent = current + '%';
+          if(t < 1) requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+
+        progObserver.unobserve(el);
+      }
+    });
+  },{threshold:0.28});
+
+  progressItems.forEach(pi=>progObserver.observe(pi));
+
+</script>
 </body>
 </html>
+
