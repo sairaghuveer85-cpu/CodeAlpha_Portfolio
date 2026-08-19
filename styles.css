@@ -1886,136 +1886,6 @@ section.section-wrapper {
   display: inline-block;
 }
 
-/* Algorithm Code Explorer Widget */
-.algorithm-code-explorer {
-  margin-top: 30px;
-  background: var(--bg-card);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid var(--gold-border);
-  border-radius: var(--radius-lg);
-  padding: 24px;
-  position: relative;
-  overflow: hidden;
-  box-shadow: var(--shadow-md), 0 0 40px var(--gold-subtle);
-}
-
-.algo-explorer-top-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--border-subtle);
-  margin-bottom: 14px;
-  position: relative;
-  z-index: 1;
-}
-
-.algo-window-dots {
-  display: flex;
-  gap: 7px;
-}
-
-.algo-window-dots span {
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-}
-.algo-window-dots span:nth-child(1) { background: #ff5f56; }
-.algo-window-dots span:nth-child(2) { background: #ffbd2e; }
-.algo-window-dots span:nth-child(3) { background: #27c93f; }
-
-.algo-window-title {
-  font-family: var(--font-mono);
-  font-size: 0.76rem;
-  color: var(--text-dim);
-}
-
-.algo-copy-btn {
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  color: var(--text-secondary);
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--border-subtle);
-  padding: 4px 10px;
-  border-radius: var(--radius-xs);
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  transition: all 0.2s ease;
-}
-
-.algo-copy-btn:hover {
-  background: var(--gold-subtle);
-  border-color: var(--gold-border);
-  color: var(--gold-light);
-}
-
-.algo-explorer-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 12px;
-  padding-bottom: 14px;
-  border-bottom: 1px solid var(--border-subtle);
-  margin-bottom: 16px;
-  position: relative;
-  z-index: 1;
-}
-
-.algo-tabs-list {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.algo-tab {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--border-subtle);
-  color: var(--text-muted);
-  padding: 7px 14px;
-  border-radius: var(--radius-sm);
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.25s ease;
-}
-
-.algo-tab.active, .algo-tab:hover {
-  background: var(--gold-subtle);
-  border-color: var(--gold-border-hover);
-  color: var(--gold-light);
-  box-shadow: 0 0 15px var(--gold-glow);
-}
-
-.algo-lang-badge {
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  font-weight: 600;
-  color: var(--emerald-accent);
-  background: rgba(52, 211, 153, 0.1);
-  border: 1px solid rgba(52, 211, 153, 0.3);
-  padding: 4px 10px;
-  border-radius: var(--radius-full);
-}
-
-.algo-code-content {
-  background: rgba(4, 4, 8, 0.85);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
-  padding: 20px;
-  font-family: var(--font-mono);
-  font-size: 0.84rem;
-  line-height: 1.7;
-  color: #7dd3fc;
-  overflow-x: auto;
-  position: relative;
-  z-index: 1;
-}
-
 /* --------------------------------------------------------------------------
    12. SYSTEM DESIGN & ARCHITECTURE BLUEPRINT
    -------------------------------------------------------------------------- */
@@ -4283,34 +4153,6 @@ footer.site-footer {
     gap: 12px;
   }
 
-  .algorithm-code-explorer {
-    padding: 16px 12px;
-  }
-
-  .algo-explorer-top-bar {
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  .algo-tabs-list {
-    overflow-x: auto;
-    scrollbar-width: none;
-    flex-wrap: nowrap;
-    width: 100%;
-    padding-bottom: 4px;
-  }
-
-  .algo-tab {
-    white-space: nowrap;
-    font-size: 0.72rem;
-    padding: 6px 10px;
-  }
-
-  .algo-code-content {
-    font-size: 0.76rem;
-    padding: 14px 10px;
-  }
-
   /* Architecture Pipeline on Mobile */
   .arch-diagram-card {
     padding: 20px 16px;
@@ -4473,13 +4315,63 @@ footer.site-footer {
 
 /* Small Smart Phones (Max Width: 480px) */
 @media (max-width: 480px) {
+  html, body {
+    overflow-x: hidden !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+  }
+
+  nav.navbar {
+    padding: 0 14px;
+    height: 58px;
+  }
+
+  .nav-brand {
+    font-size: 0.95rem;
+  }
+
+  section.hero-section {
+    padding: calc(var(--nav-height) + 8px) 12px 28px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
   .hero-headline {
-    font-size: 2.1rem;
+    font-size: clamp(1.9rem, 8.5vw, 2.6rem);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  .hero-role-wrapper {
+    font-size: 0.88rem;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+
+  .hero-description {
+    font-size: 0.88rem;
+    line-height: 1.6;
+    padding: 0 4px;
+    margin-bottom: 20px;
+  }
+
+  .hero-cta-group {
+    flex-direction: column;
+    width: 100%;
+    gap: 8px;
+  }
+
+  .hero-cta-group .btn-premium {
+    width: 100%;
+    justify-content: center;
+    padding: 12px 18px;
   }
 
   .hero-telemetry-bar {
     grid-template-columns: 1fr;
     gap: 8px;
+    padding: 12px 10px;
+    margin-top: 18px;
   }
 
   .about-metrics-strip {
@@ -4492,9 +4384,62 @@ footer.site-footer {
     gap: 6px;
   }
 
+  .section-wrapper {
+    padding: 44px 12px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .section-header-area {
+    margin-bottom: 28px;
+  }
+
+  .section-tag-badge {
+    font-size: 0.68rem;
+    padding: 4px 10px;
+  }
+
+  .section-main-heading {
+    font-size: clamp(1.6rem, 7vw, 2.2rem);
+    line-height: 1.15;
+  }
+
+  /* Projects, DSA & Architecture Cards */
+  .project-card, 
+  .dsa-cat-card, 
+  .architecture-diagram-card, 
+  .journey-card, 
+  .inquiry-studio-card {
+    padding: 18px 14px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .dsa-cats-grid,
+  .projects-featured-grid,
+  .contact-cards-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    width: 100%;
+  }
+
+  .inquiry-form-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  /* iOS Zoom Prevention for Form Inputs */
+  input[type="text"],
+  input[type="email"],
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+
+  /* AI Floating Launcher */
   .ai-launcher-container {
-    bottom: 18px;
-    right: 14px;
+    bottom: max(14px, env(safe-area-inset-bottom));
+    right: 12px;
   }
 
   .ai-launcher-btn {
@@ -4513,15 +4458,16 @@ footer.site-footer {
   }
 
   .ai-modal-backdrop {
-    padding: 8px;
+    padding: 0;
     align-items: flex-end;
   }
 
   .ai-modal-window {
     width: 100%;
-    height: 90vh;
-    max-height: 90vh;
+    height: 85vh;
+    max-height: 85vh;
     border-radius: var(--radius-md) var(--radius-md) 0 0;
+    border-bottom: none;
   }
 
   .ai-modal-header {
@@ -4529,8 +4475,8 @@ footer.site-footer {
   }
 
   .ai-avatar-badge {
-    width: 32px;
-    height: 32px;
+    width: 30px;
+    height: 30px;
   }
 
   .ai-title-row h4 {
@@ -4556,8 +4502,9 @@ footer.site-footer {
   }
 
   .ai-input-form {
-    padding: 10px 12px;
+    padding: 8px 10px;
   }
 }
+
 
 
