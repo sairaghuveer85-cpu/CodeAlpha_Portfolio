@@ -997,17 +997,36 @@ public int search(int[] nums, int target) {
 }`
     };
 
+    const copyBtn = document.getElementById('algoCopyCodeBtn');
+    let currentKey = 'twopointers';
+
     tabs.forEach((tab) => {
       tab.addEventListener('click', () => {
         tabs.forEach((t) => t.classList.remove('active'));
         tab.classList.add('active');
-        const key = tab.getAttribute('data-snippet');
-        if (codeDisplay && snippets[key]) {
-          codeDisplay.innerHTML = `<code>${snippets[key]}</code>`;
+        currentKey = tab.getAttribute('data-snippet');
+        if (codeDisplay && snippets[currentKey]) {
+          codeDisplay.innerHTML = `<code>${snippets[currentKey]}</code>`;
           playSynthSound('click');
         }
       });
     });
+
+    if (copyBtn) {
+      copyBtn.addEventListener('click', () => {
+        const text = snippets[currentKey] || (codeDisplay ? codeDisplay.textContent : '');
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(text).then(() => {
+            playSynthSound('success');
+            showToast('📋 Code copied to clipboard!');
+            copyBtn.innerHTML = '<span>✓</span> Copied!';
+            setTimeout(() => {
+              copyBtn.innerHTML = '<span>📋</span> Copy Code';
+            }, 2000);
+          });
+        }
+      });
+    }
   };
 
   /* --------------------------------------------------------------------------
@@ -1554,362 +1573,7 @@ public int search(int[] nums, int target) {
   };
 
   /* --------------------------------------------------------------------------
-     22. INTERACTIVE DSA STEP-BY-STEP VISUALIZER ENGINE
-     -------------------------------------------------------------------------- */
-  const initDsaVisualizer = () => {
-    const section = document.getElementById('dsaVisualizerSection');
-    if (!section) return;
-
-    const arrayContainer = document.getElementById('dsaArrayContainer');
-    const pointersTrack = document.getElementById('dsaPointersTrack');
-    const targetValEl = document.getElementById('visTargetValue');
-    const statusTelemetry = document.getElementById('visStatusTelemetry');
-    const stepCountEl = document.getElementById('visStepCount');
-    const compCountEl = document.getElementById('visCompCount');
-    const explanationText = document.getElementById('visExplanationText');
-    const playBtn = document.getElementById('visPlayBtn');
-    const stepBtn = document.getElementById('visStepBtn');
-    const resetBtn = document.getElementById('visResetBtn');
-    const algoTabs = document.querySelectorAll('.dsa-vis-tab-btn');
-    const targetChips = document.querySelectorAll('.vis-chip-target');
-
-    let currentAlgo = 'binarySearch';
-    let target = 23;
-    let autoPlayTimer = null;
-    let isPlaying = false;
-
-    // Datasets
-    const bsArray = [2, 5, 8, 12, 16, 23, 38, 56, 72, 91];
-    const tpArray = [2, 7, 11, 15, 18, 22]; // Target sum 26: 11 + 15 = 26
-
-    // State Variables
-    let left = 0;
-    let right = bsArray.length - 1;
-    let mid = -1;
-    let steps = 0;
-    let comparisons = 0;
-    let isFinished = false;
-
-    const renderArray = () => {
-      if (!arrayContainer || !pointersTrack) return;
-      const currentData = currentAlgo === 'binarySearch' ? bsArray : tpArray;
-      arrayContainer.innerHTML = '';
-      pointersTrack.innerHTML = '';
-
-      currentData.forEach((val, idx) => {
-        const cell = document.createElement('div');
-        cell.className = 'dsa-arr-cell in-window';
-        cell.id = `dsaCell_${idx}`;
-        cell.innerHTML = `<span class="cell-index">[${idx}]</span><span>${val}</span>`;
-        arrayContainer.appendChild(cell);
-
-        const ptrSlot = document.createElement('div');
-        ptrSlot.className = 'dsa-ptr-slot';
-        ptrSlot.id = `dsaPtrSlot_${idx}`;
-        pointersTrack.appendChild(ptrSlot);
-      });
-      updatePointerBadges();
-    };
-
-    const updatePointerBadges = () => {
-      const currentData = currentAlgo === 'binarySearch' ? bsArray : tpArray;
-      for (let i = 0; i < currentData.length; i++) {
-        const slot = document.getElementById(`dsaPtrSlot_${i}`);
-        const cell = document.getElementById(`dsaCell_${i}`);
-        if (!slot || !cell) continue;
-        slot.innerHTML = '';
-
-        if (currentAlgo === 'binarySearch') {
-          let badges = '';
-          if (i === left && left <= right && !isFinished) {
-            badges += '<span class="dsa-ptr-badge ptr-l">L</span>';
-          }
-          if (i === mid && mid !== -1) {
-            badges += '<span class="dsa-ptr-badge ptr-m">M</span>';
-          }
-          if (i === right && left <= right && !isFinished) {
-            badges += '<span class="dsa-ptr-badge ptr-r">R</span>';
-          }
-          slot.innerHTML = badges;
-        } else {
-          let badges = '';
-          if (i === left && left <= right) {
-            badges += '<span class="dsa-ptr-badge ptr-l">L</span>';
-          }
-          if (i === right && left <= right) {
-            badges += '<span class="dsa-ptr-badge ptr-r">R</span>';
-          }
-          slot.innerHTML = badges;
-        }
-      }
-    };
-
-    const resetVisualizer = () => {
-      if (autoPlayTimer) {
-        clearInterval(autoPlayTimer);
-        autoPlayTimer = null;
-        isPlaying = false;
-        if (playBtn) playBtn.innerHTML = '<span class="btn-icon">▷</span> Auto Play';
-      }
-      const currentData = currentAlgo === 'binarySearch' ? bsArray : tpArray;
-      left = 0;
-      right = currentData.length - 1;
-      mid = -1;
-      steps = 0;
-      comparisons = 0;
-      isFinished = false;
-
-      if (stepCountEl) stepCountEl.textContent = '0';
-      if (compCountEl) compCountEl.textContent = '0';
-      if (statusTelemetry) {
-        statusTelemetry.textContent = `Status: Initialized · Ready to execute ${currentAlgo === 'binarySearch' ? 'Binary Search' : 'Two Pointers'}`;
-        statusTelemetry.style.color = 'var(--cyan-accent)';
-      }
-      
-      renderArray();
-    };
-
-    const stepBinarySearch = () => {
-      if (isFinished) return;
-
-      if (left <= right) {
-        mid = Math.floor((left + right) / 2);
-        steps++;
-        comparisons++;
-        if (stepCountEl) stepCountEl.textContent = steps;
-        if (compCountEl) compCountEl.textContent = comparisons;
-
-        // Reset previous highlights
-        for (let i = 0; i < bsArray.length; i++) {
-          const cell = document.getElementById(`dsaCell_${i}`);
-          if (!cell) continue;
-          if (i < left || i > right) {
-            cell.className = 'dsa-arr-cell eliminated';
-          } else {
-            cell.className = 'dsa-arr-cell in-window';
-          }
-        }
-
-        const midCell = document.getElementById(`dsaCell_${mid}`);
-        if (midCell) midCell.classList.add('cell-mid');
-
-        playSynthSound('type');
-
-        const midVal = bsArray[mid];
-        if (midVal === target) {
-          isFinished = true;
-          if (midCell) {
-            midCell.classList.remove('cell-mid');
-            midCell.classList.add('cell-found');
-          }
-          if (statusTelemetry) {
-            statusTelemetry.textContent = `🎯 TARGET FOUND: arr[${mid}] = ${target} in ${steps} steps! O(log N)`;
-            statusTelemetry.style.color = '#34d399';
-          }
-          playSynthSound('success');
-          showToast(`🎯 Element ${target} found at index ${mid}!`);
-          if (autoPlayTimer) {
-            clearInterval(autoPlayTimer);
-            autoPlayTimer = null;
-            isPlaying = false;
-            if (playBtn) playBtn.innerHTML = '<span class="btn-icon">▷</span> Auto Play';
-          }
-        } else if (midVal < target) {
-          if (statusTelemetry) {
-            statusTelemetry.textContent = `arr[${mid}] = ${midVal} < ${target} → Search Right Half (L = ${mid + 1})`;
-            statusTelemetry.style.color = 'var(--cyan-accent)';
-          }
-          left = mid + 1;
-        } else {
-          if (statusTelemetry) {
-            statusTelemetry.textContent = `arr[${mid}] = ${midVal} > ${target} → Search Left Half (R = ${mid - 1})`;
-            statusTelemetry.style.color = 'var(--gold-light)';
-          }
-          right = mid - 1;
-        }
-        updatePointerBadges();
-      } else {
-        isFinished = true;
-        for (let i = 0; i < bsArray.length; i++) {
-          const cell = document.getElementById(`dsaCell_${i}`);
-          if (cell) cell.className = 'dsa-arr-cell eliminated';
-        }
-        if (statusTelemetry) {
-          statusTelemetry.textContent = `✕ Target ${target} NOT FOUND in array after ${steps} steps.`;
-          statusTelemetry.style.color = '#f87171';
-        }
-        playSynthSound('click');
-        if (autoPlayTimer) {
-          clearInterval(autoPlayTimer);
-          autoPlayTimer = null;
-          isPlaying = false;
-          if (playBtn) playBtn.innerHTML = '<span class="btn-icon">▷</span> Auto Play';
-        }
-        updatePointerBadges();
-      }
-    };
-
-    const stepTwoPointers = () => {
-      if (isFinished) return;
-
-      if (left < right) {
-        steps++;
-        comparisons++;
-        if (stepCountEl) stepCountEl.textContent = steps;
-        if (compCountEl) compCountEl.textContent = comparisons;
-
-        for (let i = 0; i < tpArray.length; i++) {
-          const cell = document.getElementById(`dsaCell_${i}`);
-          if (!cell) continue;
-          if (i < left || i > right) {
-            cell.className = 'dsa-arr-cell eliminated';
-          } else {
-            cell.className = 'dsa-arr-cell in-window';
-          }
-        }
-
-        const lCell = document.getElementById(`dsaCell_${left}`);
-        const rCell = document.getElementById(`dsaCell_${right}`);
-        if (lCell) lCell.classList.add('cell-left');
-        if (rCell) rCell.classList.add('cell-right');
-
-        playSynthSound('type');
-
-        const sum = tpArray[left] + tpArray[right];
-        if (sum === target) {
-          isFinished = true;
-          if (lCell) lCell.className = 'dsa-arr-cell cell-found';
-          if (rCell) rCell.className = 'dsa-arr-cell cell-found';
-          if (statusTelemetry) {
-            statusTelemetry.textContent = `🎯 PAIR FOUND: arr[${left}] (${tpArray[left]}) + arr[${right}] (${tpArray[right]}) = ${target}! O(N)`;
-            statusTelemetry.style.color = '#34d399';
-          }
-          playSynthSound('success');
-          showToast(`🎯 Two-Sum Pair Found: [${tpArray[left]}, ${tpArray[right]}] = ${target}!`);
-          if (autoPlayTimer) {
-            clearInterval(autoPlayTimer);
-            autoPlayTimer = null;
-            isPlaying = false;
-            if (playBtn) playBtn.innerHTML = '<span class="btn-icon">▷</span> Auto Play';
-          }
-        } else if (sum < target) {
-          if (statusTelemetry) {
-            statusTelemetry.textContent = `Sum (${sum}) < Target (${target}) → Increment Left Pointer (L = ${left + 1})`;
-            statusTelemetry.style.color = 'var(--cyan-accent)';
-          }
-          left++;
-        } else {
-          if (statusTelemetry) {
-            statusTelemetry.textContent = `Sum (${sum}) > Target (${target}) → Decrement Right Pointer (R = ${right - 1})`;
-            statusTelemetry.style.color = 'var(--purple-accent)';
-          }
-          right--;
-        }
-        updatePointerBadges();
-      } else {
-        isFinished = true;
-        if (statusTelemetry) {
-          statusTelemetry.textContent = `✕ No two elements sum to ${target}.`;
-          statusTelemetry.style.color = '#f87171';
-        }
-        if (autoPlayTimer) {
-          clearInterval(autoPlayTimer);
-          autoPlayTimer = null;
-          isPlaying = false;
-          if (playBtn) playBtn.innerHTML = '<span class="btn-icon">▷</span> Auto Play';
-        }
-        updatePointerBadges();
-      }
-    };
-
-    const doStep = () => {
-      if (currentAlgo === 'binarySearch') {
-        stepBinarySearch();
-      } else {
-        stepTwoPointers();
-      }
-    };
-
-    if (stepBtn) {
-      stepBtn.addEventListener('click', () => {
-        playSynthSound('click');
-        doStep();
-      });
-    }
-
-    if (playBtn) {
-      playBtn.addEventListener('click', () => {
-        playSynthSound('click');
-        if (isPlaying) {
-          clearInterval(autoPlayTimer);
-          autoPlayTimer = null;
-          isPlaying = false;
-          playBtn.innerHTML = '<span class="btn-icon">▷</span> Auto Play';
-        } else {
-          if (isFinished) resetVisualizer();
-          isPlaying = true;
-          playBtn.innerHTML = '<span class="btn-icon">⏸</span> Pause';
-          autoPlayTimer = setInterval(() => {
-            if (isFinished) {
-              clearInterval(autoPlayTimer);
-              autoPlayTimer = null;
-              isPlaying = false;
-              playBtn.innerHTML = '<span class="btn-icon">▷</span> Auto Play';
-            } else {
-              doStep();
-            }
-          }, 850);
-        }
-      });
-    }
-
-    if (resetBtn) {
-      resetBtn.addEventListener('click', () => {
-        playSynthSound('click');
-        resetVisualizer();
-      });
-    }
-
-    algoTabs.forEach((tab) => {
-      tab.addEventListener('click', () => {
-        algoTabs.forEach((t) => t.classList.remove('active'));
-        tab.classList.add('active');
-        currentAlgo = tab.getAttribute('data-vis-algo');
-        playSynthSound('mode');
-
-        if (currentAlgo === 'binarySearch') {
-          target = 23;
-          if (targetValEl) targetValEl.textContent = '23';
-          if (explanationText) {
-            explanationText.innerHTML = '💡 <strong>Binary Search Principle:</strong> Divides search space in half at each step by comparing target with middle element <code>arr[mid]</code>. Reduces runtime from $O(N)$ to $O(\\log N)$.';
-          }
-        } else {
-          target = 26;
-          if (targetValEl) targetValEl.textContent = '26';
-          if (explanationText) {
-            explanationText.innerHTML = '💡 <strong>Two Pointers Principle:</strong> Places pointers at the extremities of a sorted array and converges inward based on the current pair sum. Solves 2-Sum in $O(N)$ time and $O(1)$ space.';
-          }
-        }
-        resetVisualizer();
-      });
-    });
-
-    targetChips.forEach((chip) => {
-      chip.addEventListener('click', () => {
-        targetChips.forEach((c) => c.classList.remove('active'));
-        chip.classList.add('active');
-        target = parseInt(chip.getAttribute('data-target'), 10);
-        if (targetValEl) targetValEl.textContent = target;
-        playSynthSound('click');
-        resetVisualizer();
-      });
-    });
-
-    renderArray();
-  };
-
-  /* --------------------------------------------------------------------------
-     23. ARCHITECTURE LIVE REQUEST SIMULATOR
+     22. ARCHITECTURE LIVE REQUEST SIMULATOR
      -------------------------------------------------------------------------- */
   const initArchLiveSimulation = () => {
     const simBtn = document.getElementById('archSimulateBtn');
@@ -2000,7 +1664,7 @@ public int search(int[] nums, int target) {
   };
 
   /* --------------------------------------------------------------------------
-     24. AI NEURAL CO-PILOT ASSISTANT (INTERACTIVE INTELLIGENCE SANDBOX)
+     23. AI NEURAL CO-PILOT ASSISTANT (INTERACTIVE INTELLIGENCE SANDBOX)
      -------------------------------------------------------------------------- */
   const initAiAssistant = () => {
     const launcherBtn = document.getElementById('aiLauncherBtn');
@@ -2287,7 +1951,6 @@ public int search(int[] nums, int target) {
     initThemeToggle();
     initMobileMenu();
     initBackToTop();
-    initDsaVisualizer();
     initArchLiveSimulation();
     initAiAssistant();
   });
