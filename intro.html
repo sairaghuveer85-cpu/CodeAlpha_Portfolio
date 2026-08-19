@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Cherukuri Raghuveer — Portfolio</title>
+  <meta name="description" content="Cherukuri Raghuveer — Full Stack & Android Engineer Portfolio" />
+  <meta name="theme-color" content="#030305" />
+
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <link rel="apple-touch-icon" href="favicon.png" />
+
+  <!-- Google Fonts: Playfair Display + Syne + Inter + JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:ital,wght@0,600;0,700;1,600;1,700&family=Syne:wght@500;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <style>
+    /* =========================================================================
+       01. DESIGN TOKENS & RESPONSIVE METRICS
+       ========================================================================= */
+    :root {
+      --bg-dark: #030305;
+      --bg-surface: rgba(12, 12, 20, 0.65);
+      
+      --gold-primary: #c9a84c;
+      --gold-light: #f3dc98;
+      --gold-bright: #ffe8a3;
+      --gold-deep: #9d7d29;
+      --gold-glow: rgba(201, 168, 76, 0.4);
+      --gold-border: rgba(201, 168, 76, 0.22);
+
+      --text-main: #f8f6f0;
+      --text-muted: rgba(248, 246, 240, 0.72);
+      --text-dim: rgba(248, 246, 240, 0.4);
+
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-sans: 'Syne', 'Inter', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+
+      --ease-snappy: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      min-height: 100vh;
+      min-height: -webkit-fill-available;
+      overflow: hidden;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      cursor: pointer;
+    }
+
+    /* 3D Canvas Layer */
+    #universeCanvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* Ambient Lighting */
+    .ambient-spotlight {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 500px;
+      height: 500px;
+      margin-left: -250px;
+      margin-top: -250px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(201, 168, 76, 0.08) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 2;
+      will-change: transform;
+    }
+
+    .ambient-radial-depth {
+      position: fixed;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      background: 
+        radial-gradient(circle at 50% 50%, rgba(201, 168, 76, 0.08) 0%, transparent 65%),
+        radial-gradient(circle at 15% 85%, rgba(56, 189, 248, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 85% 15%, rgba(201, 168, 76, 0.04) 0%, transparent 50%);
+    }
+
+    .cyber-mesh {
+      position: fixed;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.016) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.016) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(ellipse at center, black 35%, transparent 80%);
+      -webkit-mask-image: radial-gradient(ellipse at center, black 35%, transparent 80%);
+    }
+
+    /* =========================================================================
+       02. FOREGROUND VIEWPORT (WITH NOTCH / SAFE AREA SUPPORT)
+       ========================================================================= */
+    .intro-viewport {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      padding: clamp(16px, 3vh, 44px) clamp(16px, 4vw, 60px);
+      padding-top: max(18px, env(safe-area-inset-top));
+      padding-bottom: max(18px, env(safe-area-inset-bottom));
+      padding-left: max(16px, env(safe-area-inset-left));
+      padding-right: max(16px, env(safe-area-inset-right));
+      transition: opacity 0.4s var(--ease-snappy), transform 0.4s var(--ease-snappy), filter 0.4s ease;
+    }
+
+    .fade-out .intro-viewport {
+      opacity: 0;
+      transform: scale(1.03);
+      filter: blur(10px);
+      pointer-events: none;
+    }
+
+    /* Top Telemetry */
+    .top-telemetry {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      opacity: 0;
+      transform: translateY(-14px);
+      animation: dropIn 0.5s var(--ease-snappy) forwards 0.05s;
+    }
+
+    .telemetry-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 12px;
+      border-radius: 999px;
+      background: var(--bg-surface);
+      border: 1px solid var(--gold-border);
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .beacon-pulse {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--gold-primary);
+      box-shadow: 0 0 10px var(--gold-glow);
+    }
+
+    .skip-prompt {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--text-dim);
+      letter-spacing: 0.06em;
+      background: var(--bg-surface);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 5px 12px;
+      border-radius: 999px;
+      transition: all 0.2s ease;
+    }
+
+    body:hover .skip-prompt {
+      color: var(--gold-bright);
+      border-color: var(--gold-border);
+    }
+
+    /* Center Monument */
+    .center-monument {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      max-width: 900px;
+      width: 100%;
+      margin: auto 0;
+    }
+
+    /* Gyroscopic Monogram */
+    .gyro-monogram {
+      position: relative;
+      width: 58px;
+      height: 58px;
+      margin-bottom: 16px;
+      display: grid;
+      place-items: center;
+      opacity: 0;
+      transform: scale(0.8);
+      animation: gyroIn 0.6s var(--ease-snappy) forwards 0.1s;
+    }
+
+    .gyro-ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 1px dashed rgba(201, 168, 76, 0.4);
+      animation: spinClockwise 16s linear infinite;
+    }
+
+    .gyro-core {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, rgba(201, 168, 76, 0.15), rgba(255, 255, 255, 0.02));
+      border: 1px solid var(--gold-border);
+      display: grid;
+      place-items: center;
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 700;
+      font-style: italic;
+      color: var(--gold-bright);
+      box-shadow: 0 0 20px rgba(201, 168, 76, 0.2);
+    }
+
+    /* Sub-header Protocol Tag */
+    .protocol-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold-light);
+      margin-bottom: 12px;
+      opacity: 0;
+      transform: translateY(12px);
+      animation: fadeInUp 0.5s var(--ease-snappy) forwards 0.15s;
+    }
+
+    .protocol-badge::before,
+    .protocol-badge::after {
+      content: '';
+      width: 16px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold-primary), transparent);
+    }
+
+    /* Name Monument */
+    .name-monument {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 12px;
+      width: 100%;
+    }
+
+    .first-name-overflow {
+      overflow: hidden;
+      padding: 0 10px;
+    }
+
+    .first-name {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: clamp(2.2rem, 6.8vw, 5.2rem);
+      font-weight: 600;
+      line-height: 1.05;
+      letter-spacing: -0.01em;
+      background: linear-gradient(135deg, #ffffff 10%, var(--gold-bright) 50%, var(--gold-primary) 90%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      opacity: 0;
+      transform: translateY(100%);
+      animation: maskReveal 0.65s var(--ease-snappy) forwards 0.2s;
+      filter: drop-shadow(0 10px 30px rgba(201, 168, 76, 0.2));
+    }
+
+    .last-name {
+      font-family: var(--font-sans);
+      font-size: clamp(2.4rem, 7.8vw, 6.4rem);
+      font-weight: 900;
+      line-height: 0.95;
+      letter-spacing: -0.02em;
+      text-transform: uppercase;
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0.02em;
+      max-width: 100%;
+    }
+
+    .kinetic-char {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(26px) scale(0.92);
+      filter: blur(5px);
+      animation: charSpring 0.55s var(--ease-snappy) forwards;
+    }
+
+    /* Subtitle & Role */
+    .role-narrative {
+      font-family: var(--font-sans);
+      font-size: clamp(0.85rem, 1.6vw, 1.15rem);
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      opacity: 0;
+      transform: translateY(12px);
+      animation: fadeInUp 0.5s var(--ease-snappy) forwards 0.42s;
+    }
+
+    /* Signature Badges */
+    .tech-matrix-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 8px 10px;
+      opacity: 0;
+      transform: translateY(12px);
+      animation: fadeInUp 0.5s var(--ease-snappy) forwards 0.52s;
+      max-width: 100%;
+    }
+
+    .tech-pill {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      letter-spacing: 0.04em;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .tech-pill span.dot-sep {
+      color: var(--gold-primary);
+      opacity: 0.6;
+    }
+
+    /* Bottom Section */
+    .bottom-instrument {
+      width: 100%;
+      max-width: 380px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      opacity: 0;
+      transform: translateY(14px);
+      animation: fadeInUp 0.5s var(--ease-snappy) forwards 0.6s;
+    }
+
+    .instrument-meta {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      color: var(--text-dim);
+    }
+
+    .numeric-counter {
+      color: var(--gold-bright);
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .laser-track-housing {
+      position: relative;
+      width: 100%;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 999px;
+      overflow: visible;
+    }
+
+    .laser-energy-beam {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--gold-deep), var(--gold-primary), var(--gold-bright));
+      border-radius: 999px;
+      box-shadow: 0 0 16px rgba(201, 168, 76, 0.9);
+      transition: width 0.04s linear;
+    }
+
+    .laser-head-spark {
+      position: absolute;
+      right: -3px;
+      top: -2px;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #ffffff;
+      box-shadow: 0 0 10px #ffffff, 0 0 20px var(--gold-bright);
+    }
+
+    .action-cue {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    /* Keyframes */
+    @keyframes dropIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes gyroIn {
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes maskReveal {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes charSpring {
+      0% { opacity: 0; transform: translateY(26px) scale(0.92); filter: blur(5px); }
+      100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+    }
+
+    @keyframes spinClockwise {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Mobile Adaptations */
+    @media (max-width: 480px) {
+      .intro-viewport {
+        padding: 14px 16px;
+      }
+      .gyro-monogram {
+        width: 48px;
+        height: 48px;
+        margin-bottom: 12px;
+      }
+      .gyro-core {
+        width: 30px;
+        height: 30px;
+        font-size: 0.95rem;
+      }
+      .protocol-badge {
+        font-size: 0.62rem;
+        letter-spacing: 0.16em;
+        margin-bottom: 8px;
+      }
+      .first-name {
+        font-size: clamp(2rem, 9.5vw, 3.2rem);
+      }
+      .last-name {
+        font-size: clamp(2.2rem, 10.5vw, 3.6rem);
+      }
+      .role-narrative {
+        font-size: 0.82rem;
+        margin-bottom: 10px;
+      }
+      .tech-matrix-row {
+        gap: 6px 8px;
+      }
+      .tech-pill {
+        font-size: 0.65rem;
+      }
+      .bottom-instrument {
+        max-width: 290px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 3D Particle Galaxy Canvas -->
+  <canvas id="universeCanvas"></canvas>
+
+  <!-- Ambient Backdrop -->
+  <div class="ambient-spotlight" id="mouseSpotlight" aria-hidden="true"></div>
+  <div class="ambient-radial-depth" aria-hidden="true"></div>
+  <div class="cyber-mesh" aria-hidden="true"></div>
+
+  <!-- Primary Foreground Stage -->
+  <main class="intro-viewport" id="introViewport">
+    
+    <!-- Top Telemetry Bar -->
+    <header class="top-telemetry">
+      <div class="telemetry-tag">
+        <span class="beacon-pulse"></span>
+        <span>INITIALIZING</span>
+      </div>
+
+      <div class="skip-prompt">
+        <span>Tap to Enter ↵</span>
+      </div>
+    </header>
+
+    <!-- Center Monument -->
+    <section class="center-monument">
+      
+      <!-- Gyroscope Monogram -->
+      <div class="gyro-monogram" aria-hidden="true">
+        <div class="gyro-ring"></div>
+        <div class="gyro-core">R</div>
+      </div>
+
+      <!-- Protocol Pill -->
+      <div class="protocol-badge">
+        <span>PORTFOLIO 2026</span>
+      </div>
+
+      <!-- Main Name Assembly -->
+      <div class="name-monument">
+        <div class="first-name-overflow">
+          <h2 class="first-name">Cherukuri</h2>
+        </div>
+        <h1 class="last-name" id="lastNameContainer" aria-label="Raghuveer"></h1>
+      </div>
+
+      <!-- Role Narrative -->
+      <p class="role-narrative">Full Stack & Android Engineer</p>
+
+      <!-- Signature Technology Matrix -->
+      <div class="tech-matrix-row">
+        <div class="tech-pill"><span>Java 21</span><span class="dot-sep">✦</span></div>
+        <div class="tech-pill"><span>Spring Boot 3</span><span class="dot-sep">✦</span></div>
+        <div class="tech-pill"><span>Android Kotlin</span><span class="dot-sep">✦</span></div>
+        <div class="tech-pill"><span>React 19</span></div>
+      </div>
+
+    </section>
+
+    <!-- Bottom Laser Instrument -->
+    <footer class="bottom-instrument">
+      <div class="instrument-meta">
+        <span>CALIBRATION</span>
+        <span class="numeric-counter" id="progressNumber">00%</span>
+      </div>
+
+      <div class="laser-track-housing">
+        <div class="laser-energy-beam" id="laserBeam">
+          <div class="laser-head-spark"></div>
+        </div>
+      </div>
+
+      <div class="action-cue">
+        <span>Tap or Press Space to Enter</span>
+      </div>
+    </footer>
+
+  </main>
+
+  <script>
+    (function () {
+      'use strict';
+
+      /* -----------------------------------------------------------------------
+         01. KINETIC STAGGERED CHARACTER ASSEMBLY
+         ----------------------------------------------------------------------- */
+      const lastName = 'RAGHUVEER';
+      const lastNameContainer = document.getElementById('lastNameContainer');
+
+      [...lastName].forEach((char, index) => {
+        const span = document.createElement('span');
+        span.className = 'kinetic-char';
+        span.textContent = char;
+        span.style.animationDelay = `${0.24 + index * 0.028}s`;
+        lastNameContainer.appendChild(span);
+      });
+
+      /* -----------------------------------------------------------------------
+         02. 3D REVOLVING GALAXY PARTICLE ENGINE (MOBILE SCALED)
+         ----------------------------------------------------------------------- */
+      const canvas = document.getElementById('universeCanvas');
+      const ctx = canvas.getContext('2d');
+      const spotlight = document.getElementById('mouseSpotlight');
+
+      let dpr = window.devicePixelRatio || 1;
+      let width = (canvas.width = window.innerWidth * dpr);
+      let height = (canvas.height = window.innerHeight * dpr);
+      ctx.scale(dpr, dpr);
+
+      let cssWidth = window.innerWidth;
+      let cssHeight = window.innerHeight;
+
+      let mouse = { x: cssWidth / 2, y: cssHeight / 2, tx: cssWidth / 2, ty: cssHeight / 2 };
+      let rotationX = 0;
+      let rotationY = 0;
+
+      function resize() {
+        dpr = window.devicePixelRatio || 1;
+        cssWidth = window.innerWidth;
+        cssHeight = window.innerHeight;
+        canvas.width = cssWidth * dpr;
+        canvas.height = cssHeight * dpr;
+        ctx.scale(dpr, dpr);
+      }
+
+      window.addEventListener('resize', resize);
+
+      window.addEventListener('mousemove', (e) => {
+        mouse.tx = e.clientX;
+        mouse.ty = e.clientY;
+      });
+
+      window.addEventListener('touchmove', (e) => {
+        if (e.touches.length > 0) {
+          mouse.tx = e.touches[0].clientX;
+          mouse.ty = e.touches[0].clientY;
+        }
+      }, { passive: true });
+
+      const isMobile = cssWidth < 600;
+      const SPHERE_NODES = isMobile ? 65 : 90;
+      const sphereParticles = [];
+      const RADIUS = Math.min(isMobile ? 120 : 260, Math.floor(cssWidth * (isMobile ? 0.32 : 0.28)));
+
+      for (let i = 0; i < SPHERE_NODES; i++) {
+        const phi = Math.acos(1 - 2 * (i + 0.5) / SPHERE_NODES);
+        const theta = Math.PI * (1 + Math.sqrt(5)) * i;
+
+        sphereParticles.push({
+          origX: RADIUS * Math.sin(phi) * Math.cos(theta),
+          origY: RADIUS * Math.sin(phi) * Math.sin(theta),
+          origZ: RADIUS * Math.cos(phi),
+          radius: Math.random() * (isMobile ? 1.1 : 1.4) + 0.5,
+          alpha: Math.random() * 0.5 + 0.25
+        });
+      }
+
+      function renderUniverse() {
+        ctx.clearRect(0, 0, cssWidth, cssHeight);
+
+        mouse.x += (mouse.tx - mouse.x) * 0.08;
+        mouse.y += (mouse.ty - mouse.y) * 0.08;
+
+        if (spotlight) {
+          spotlight.style.transform = `translate3d(${mouse.x}px, ${mouse.y}px, 0)`;
+        }
+
+        rotationY += 0.004 + (mouse.x - cssWidth / 2) * 0.00002;
+        rotationX += 0.002 + (mouse.y - cssHeight / 2) * 0.00002;
+
+        const cosY = Math.cos(rotationY);
+        const sinY = Math.sin(rotationY);
+        const cosX = Math.cos(rotationX);
+        const sinX = Math.sin(rotationX);
+
+        const fov = isMobile ? 320 : 400;
+        const centerX = cssWidth / 2;
+        const centerY = cssHeight / 2;
+
+        sphereParticles.forEach((p) => {
+          const x1 = p.origX * cosY - p.origZ * sinY;
+          const z1 = p.origZ * cosY + p.origX * sinY;
+
+          const y2 = p.origY * cosX - z1 * sinX;
+          const z2 = z1 * cosX + p.origY * sinX;
+
+          const depth = fov / (fov + z2 + (isMobile ? 240 : 350));
+          const screenX = x1 * depth + centerX + (mouse.x - centerX) * 0.02;
+          const screenY = y2 * depth + centerY + (mouse.y - centerY) * 0.02;
+
+          if (depth > 0) {
+            const alpha = Math.max(0.1, Math.min(0.9, depth * p.alpha));
+            ctx.beginPath();
+            ctx.arc(screenX, screenY, Math.max(0.5, p.radius * depth), 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(243, 220, 152, ${alpha})`;
+            ctx.shadowBlur = 6;
+            ctx.shadowColor = 'rgba(201, 168, 76, 0.4)';
+            ctx.fill();
+            ctx.shadowBlur = 0;
+          }
+        });
+
+        requestAnimationFrame(renderUniverse);
+      }
+      renderUniverse();
+
+      /* -----------------------------------------------------------------------
+         03. SNAPPY PROGRESS & SEAMLESS TRANSITION
+         ----------------------------------------------------------------------- */
+      const laserBeam = document.getElementById('laserBeam');
+      const progressNumber = document.getElementById('progressNumber');
+
+      let hasNavigated = false;
+      const duration = 1350;
+      const startTime = performance.now();
+
+      function stepProgress(now) {
+        const elapsed = now - startTime;
+        const progress = Math.min(1, elapsed / duration);
+        const ease = 1 - Math.pow(1 - progress, 2.5);
+        const percent = Math.floor(ease * 100);
+
+        laserBeam.style.width = `${percent}%`;
+        progressNumber.textContent = `${percent.toString().padStart(2, '0')}%`;
+
+        if (progress < 1) {
+          requestAnimationFrame(stepProgress);
+        } else {
+          progressNumber.textContent = '100%';
+          setTimeout(enterSite, 160);
+        }
+      }
+
+      requestAnimationFrame(stepProgress);
+
+      function enterSite() {
+        if (hasNavigated) return;
+        hasNavigated = true;
+
+        document.body.classList.add('fade-out');
+        setTimeout(() => {
+          window.location.href = 'index.html?fromIntro=1';
+        }, 380);
+      }
+
+      // Universal triggers (Touch / Click / Keydown)
+      document.body.addEventListener('click', enterSite);
+      window.addEventListener('keydown', (e) => {
+        if (e.code === 'Space' || e.code === 'Enter' || e.code === 'Escape') {
+          e.preventDefault();
+          enterSite();
+        }
+      });
+
+    })();
+  </script>
+</body>
+</html>
