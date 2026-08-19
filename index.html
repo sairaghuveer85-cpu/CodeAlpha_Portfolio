@@ -785,92 +785,26 @@
       </div>
     </div>
 
-    <!-- Interactive Algorithm Step-by-Step Visualizer Sandbox -->
-    <div class="dsa-visualizer-sandbox animate-on-scroll" data-tilt id="dsaVisualizerSection">
-      <div class="card-border-beam"></div>
-      <div class="dsa-vis-header">
-        <div class="dsa-vis-title-group">
-          <div class="dsa-vis-badge">
-            <span class="pulse-ring-dot"></span>
-            Interactive DSA Visualizer Engine
-          </div>
-          <h3>Step-by-Step Algorithm Execution</h3>
-        </div>
-        <div class="dsa-vis-mode-selector">
-          <button class="dsa-vis-tab-btn active" data-vis-algo="binarySearch">Binary Search O(log N)</button>
-          <button class="dsa-vis-tab-btn" data-vis-algo="twoPointers">Two Pointers O(N)</button>
-        </div>
-      </div>
-
-      <!-- Interactive Array Canvas Display -->
-      <div class="dsa-vis-canvas-card">
-        <div class="dsa-vis-target-strip">
-          <div class="vis-target-info">
-            <span class="vis-label">Target Value:</span>
-            <span class="vis-target-val" id="visTargetValue">23</span>
-          </div>
-          <div class="vis-status-telemetry" id="visStatusTelemetry">
-            Status: Ready · Select target or press 'Play'
-          </div>
-        </div>
-
-        <div class="dsa-array-container" id="dsaArrayContainer">
-          <!-- Dynamic Array Elements Rendered by JS -->
-        </div>
-
-        <div class="dsa-pointers-track" id="dsaPointersTrack">
-          <!-- Dynamic Pointer Markers (L, M, R) -->
-        </div>
-      </div>
-
-      <!-- Visualizer Control Deck -->
-      <div class="dsa-vis-controls-bar">
-        <div class="vis-btn-group">
-          <button class="btn-vis-action btn-play" id="visPlayBtn">
-            <span class="btn-icon">▷</span> Auto Play
-          </button>
-          <button class="btn-vis-action btn-step" id="visStepBtn">
-            <span class="btn-icon">⏭</span> Next Step
-          </button>
-          <button class="btn-vis-action btn-reset" id="visResetBtn">
-            <span class="btn-icon">↺</span> Reset
-          </button>
-        </div>
-
-        <div class="vis-preset-targets">
-          <span class="vis-preset-label">Quick Targets:</span>
-          <button class="vis-chip-target active" data-target="23">23 (Found)</button>
-          <button class="vis-chip-target" data-target="5">5 (Left)</button>
-          <button class="vis-chip-target" data-target="72">72 (Right)</button>
-          <button class="vis-chip-target" data-target="99">99 (Not Found)</button>
-        </div>
-
-        <div class="vis-telemetry-metrics">
-          <div class="vis-metric-item">
-            <span class="m-lbl">Steps:</span>
-            <span class="m-val" id="visStepCount">0</span>
-          </div>
-          <div class="vis-metric-item">
-            <span class="m-lbl">Comparisons:</span>
-            <span class="m-val" id="visCompCount">0</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="dsa-vis-explanation-card" id="visExplanationText">
-        💡 <strong>Binary Search Principle:</strong> Divides the search space in half at each step by comparing target with middle element <code>arr[mid]</code>. Reduces runtime from $O(N)$ to $O(\log N)$.
-      </div>
-    </div>
-
     <!-- Interactive Algorithm Code Inspector Widget -->
     <div class="algorithm-code-explorer animate-on-scroll" data-tilt>
       <div class="card-border-beam"></div>
+      
+      <div class="algo-explorer-top-bar">
+        <div class="algo-window-dots">
+          <span></span><span></span><span></span>
+        </div>
+        <span class="algo-window-title">AlgoExplorer.java · Optimal Java 21 Solutions</span>
+        <button class="algo-copy-btn" id="algoCopyCodeBtn" title="Copy code snippet">
+          <span>📋</span> Copy Code
+        </button>
+      </div>
+
       <div class="algo-explorer-header">
         <div class="algo-tabs-list">
-          <button class="algo-tab active" data-snippet="twopointers">Two Pointers (O(N))</button>
+          <button class="algo-tab active" data-snippet="twopointers">Two Pointers O(N)</button>
           <button class="algo-tab" data-snippet="tree">Tree Inversion (DFS)</button>
           <button class="algo-tab" data-snippet="dp">DP Memoization</button>
-          <button class="algo-tab" data-snippet="binarysearch">Binary Search (O(log N))</button>
+          <button class="algo-tab" data-snippet="binarysearch">Binary Search O(log N)</button>
         </div>
         <span class="algo-lang-badge">Java 21 Optimal</span>
       </div>
